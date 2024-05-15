@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Simple Map</title>
     <style>
         /* Style pour définir la taille de la carte */
         #map {
@@ -11,7 +10,6 @@
     </style>
 </head>
 <body>
-    <h3>Ma Carte Google</h3>
     <!-- Case à cocher pour afficher le texte -->
     <label>
         <input type="checkbox" id="toggleText" onclick="toggleOverlay()"> Afficher "Test"
@@ -19,8 +17,7 @@
     <div id="map"></div> <!-- Container où la carte sera affichée -->
 
     <!-- Charge l'API Google Maps et appelle la fonction initMap -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA7-dKbSp7eLdzipxpKoBhet8or-ls048U&callback=initMap"
-    async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA7-dKbSp7eLdzipxpKoBhet8or-ls048U&callback=initMap" async defer></script>
     <script>
         var map;
         var overlay;
@@ -37,6 +34,9 @@
     
             map = new google.maps.Map(document.getElementById('map'), options);
     
+            // Charger et afficher la couche GeoJSON
+            map.data.loadGeoJson('Lausanne_Region.geojson');
+
             // Création de l'overlay pour "Test"
             overlay = new google.maps.OverlayView();
             overlay.onAdd = function() {
