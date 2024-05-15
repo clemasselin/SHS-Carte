@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Map</title>
+    <style>
+        /* Style pour définir la taille de la carte */
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h3>Ma Carte Google</h3>
+    <!-- Case à cocher pour afficher le texte -->
+    <label>
+        <input type="checkbox" id="toggleText" onclick="toggleOverlay()"> Afficher "Test"
+    </label>
+    <div id="map"></div> <!-- Container où la carte sera affichée -->
+
+    <!-- Charge l'API Google Maps et appelle la fonction initMap -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA7-dKbSp7eLdzipxpKoBhet8or-ls048U&callback=initMap"
+    async defer></script>
+    <script>
+        var map;
+        var overlay;
+
+        function initMap() {
+            // Options de la carte
+            var options = {
+                zoom: 11,
+                center: {lat: 46.5196, lng: 6.6323},
+                zoomControl: false,
+                streetViewControl: false,
+                fullscreenControl: false,
+                mapTypeControl: false
+            };
+
+            // Création de la carte et attache à l'élément 'map'
+            map = new google.maps.Map(document.getElementById('map'), options);
+
+            // Création de l'overlay pour "Test"
+            overlay = new google.maps.OverlayView();
+            overlay.draw = function() {
+                var layer = this.getPanes().overlayLayer;
+                var div = layer.firstChild;
+                if (!div) {
+                    div = document.createElement('div');
+                    div.style.border = 'none';
+                    div.style.borderWidth = '0px';
+                    div.style.position = 'absolute';
+                    div.style.color = 'red';
+                    div.style.fontSize = '30px';
+                    div.style.fontWeight = 'bold';
+                    div.textContent = 'TEST';
+                    layer.appendChild(div);
+                }
+                var projection = this.getProjection();
+                var position = projection.fromLatLngToDivPixel(map.getCenter());
+                div.style.left = position.x - (div.offsetWidth / 2) + 'px';
+                div.style.top = position.y - (div.offsetHeight / 2) + 'px';
+            };
+            overlay.setMap(null); // Commence avec l'overlay non affiché
+        }
+
+        // Fonction pour afficher/cacher l'overlay
+        function toggleOverlay() {
+            if (document.getElementById('toggleText').checked) {
+                overlay.setMap(map);
+            } else {
+                overlay.setMap(null);
+            }
+        }
+    </script>
+</body>
+</html>
