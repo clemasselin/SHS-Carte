@@ -24,9 +24,8 @@
     <script>
         var map;
         var overlay;
-
+    
         function initMap() {
-            // Options de la carte
             var options = {
                 zoom: 11,
                 center: {lat: 46.5196, lng: 6.6323},
@@ -35,37 +34,43 @@
                 fullscreenControl: false,
                 mapTypeControl: false
             };
-
-            // Création de la carte et attache à l'élément 'map'
+    
             map = new google.maps.Map(document.getElementById('map'), options);
-
+    
             // Création de l'overlay pour "Test"
             overlay = new google.maps.OverlayView();
+            overlay.onAdd = function() {
+                var layer = document.createElement('div');
+                layer.style.color = 'red';
+                layer.style.fontSize = '30px';
+                layer.style.fontWeight = 'bold';
+                layer.style.padding = '10px';
+                layer.innerHTML = 'TEST';
+                this.getPanes().overlayLayer.appendChild(layer);
+                this.layer_ = layer;
+            };
+    
             overlay.draw = function() {
-                var layer = this.getPanes().overlayLayer;
-                var div = layer.firstChild;
-                if (!div) {
-                    div = document.createElement('div');
-                    div.style.border = 'none';
-                    div.style.borderWidth = '0px';
-                    div.style.position = 'absolute';
-                    div.style.color = 'red';
-                    div.style.fontSize = '30px';
-                    div.style.fontWeight = 'bold';
-                    div.textContent = 'TEST';
-                    layer.appendChild(div);
-                }
                 var projection = this.getProjection();
                 var position = projection.fromLatLngToDivPixel(map.getCenter());
-                div.style.left = position.x - (div.offsetWidth / 2) + 'px';
-                div.style.top = position.y - (div.offsetHeight / 2) + 'px';
+                this.layer_.style.left = position.x - (this.layer_.offsetWidth / 2) + 'px';
+                this.layer_.style.top = position.y - (this.layer_.offsetHeight / 2) + 'px';
             };
-            overlay.setMap(null); // Commence avec l'overlay non affiché
+    
+            overlay.onRemove = function() {
+                if (this.layer_) {
+                    this.layer_.parentNode.removeChild(this.layer_);
+                    this.layer_ = null;
+                }
+            };
+    
+            // Définir initialement l'overlay sur null pour le cacher
+            overlay.setMap(null);
         }
-
-        // Fonction pour afficher/cacher l'overlay
+    
         function toggleOverlay() {
-            if (document.getElementById('toggleText').checked) {
+            var checkbox = document.getElementById('toggleText');
+            if (checkbox.checked) {
                 overlay.setMap(map);
             } else {
                 overlay.setMap(null);
